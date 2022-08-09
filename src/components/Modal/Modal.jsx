@@ -24,13 +24,7 @@ export default class Modal extends Component {
   render() {
     return createPortal(
       <ModalOverlay onClick={this.handleBackDropClick}>
-        <ModalWindow>
-          {this.props.children}
-          <img src="" alt="" />
-          <button type="button" onClick={this.props.onClose}>
-            x
-          </button>
-        </ModalWindow>
+        <ModalWindow>{this.props.children}</ModalWindow>
       </ModalOverlay>,
       modalRoot
     );

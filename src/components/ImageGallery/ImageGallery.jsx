@@ -1,15 +1,65 @@
+// import { Component } from 'react';
 import { Component } from 'react';
 import GalleryList from './ImageGallery.styled';
 import GalleyItem from '../ImageGalleryItem/ImageGalleryItem';
+import getApiResult from '../../services/apiImageService';
+import Button from '../Button';
+import LoaderWrapper from '../Loader/Loader';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 class Gallery extends Component {
+  state = {
+    images: [],
+    loading: false,
+    page: 1,
+  };
+  componentDidUpdate = async (prevProps, prevState) => {
+    const { searchQuery } = this.props;
+    const { page } = this.state;
+    const updatePage = prevProps.searchQuery !== searchQuery ? 1 : page;
+    try {
+      this.setState({ loading: true });
+      const updatedImages = await getApiResult(searchQuery, updatePage);
+      this.setState({ images: updatedImages });
+    } catch (error) {
+      console.log(error);
+    } finally {
+      this.setState({ loading: false });
+    }
+    // if (prevProps.searchQuery !== searchQuery) {
+    //   this.setState({ images: updatedImages, page: 1 });
+    // }
+    // if (prevState.page !== page && page !== 1) {
+    //   this.setState({
+    //     images: [...this.state.images, ...updatedImages],
+    //   });
+    // }
+  };
+  onLoadMore = () => {
+    this.setState(state => ({ page: state.page + 1 }));
+  };
   render() {
+    const { images } = this.state;
     return (
-      <GalleryList>
-        <GalleyItem />
-      </GalleryList>
+      <>
+        {this.state.loading && <LoaderWrapper />}
+        <GalleryList>
+          {images.map(({ id, webformatURL, largeImageURL, tags }) => (
+            <GalleyItem
+              key={id}
+              webformatURL={webformatURL}
+              tags={tags}
+              largeImageURL={largeImageURL}
+            />
+          ))}
+        </GalleryList>
+        <Button loadMore={this.onLoadMore} />
+      </>
     );
   }
 }
 
 export default Gallery;
+
+// largeImageURL

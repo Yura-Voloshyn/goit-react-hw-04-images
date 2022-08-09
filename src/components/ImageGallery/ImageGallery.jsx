@@ -7,6 +7,7 @@ import Button from '../Button';
 import LoaderWrapper from '../Loader/Loader';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import PropTypes from 'prop-types';
 
 class Gallery extends Component {
   state = {
@@ -18,32 +19,39 @@ class Gallery extends Component {
     const { searchQuery } = this.props;
     const { page } = this.state;
     const updatePage = prevProps.searchQuery !== searchQuery ? 1 : page;
-    try {
-      this.setState({ loading: true });
-      const updatedImages = await getApiResult(searchQuery, updatePage);
-      this.setState({ images: updatedImages });
-    } catch (error) {
-      console.log(error);
-    } finally {
-      this.setState({ loading: false });
+    if (prevProps.searchQuery !== searchQuery || prevState.page !== page) {
+      try {
+        this.setState({ loading: true });
+        const updatedImages = await getApiResult(searchQuery, updatePage);
+        if (updatedImages.length === 0) {
+          toast('No results');
+          this.setState({ loading: false });
+        }
+        if (prevProps.searchQuery !== searchQuery) {
+          this.setState({ images: updatedImages, page: 1 });
+        }
+        if (prevState.page !== page && page !== 1) {
+          this.setState({
+            images: [...this.state.images, ...updatedImages],
+          });
+        }
+      } catch (error) {
+        console.log(error);
+      } finally {
+        this.setState({ loading: false });
+      }
     }
     // if (prevProps.searchQuery !== searchQuery) {
     //   this.setState({ images: updatedImages, page: 1 });
     // }
-    // if (prevState.page !== page && page !== 1) {
-    //   this.setState({
-    //     images: [...this.state.images, ...updatedImages],
-    //   });
-    // }
   };
   onLoadMore = () => {
-    this.setState(state => ({ page: state.page + 1 }));
+    this.setState({ page: this.state.page + 1 });
   };
   render() {
-    const { images } = this.state;
+    const { images, loading } = this.state;
     return (
       <>
-        {this.state.loading && <LoaderWrapper />}
         <GalleryList>
           {images.map(({ id, webformatURL, largeImageURL, tags }) => (
             <GalleyItem
@@ -54,11 +62,17 @@ class Gallery extends Component {
             />
           ))}
         </GalleryList>
-        <Button loadMore={this.onLoadMore} />
+        {images.length !== 0 && !loading && (
+          <Button loadMore={this.onLoadMore} />
+        )}
+        {this.state.loading && <LoaderWrapper />}
       </>
     );
   }
 }
+Gallery.propTypes = {
+  searchQuery: PropTypes.string,
+};
 
 export default Gallery;
 

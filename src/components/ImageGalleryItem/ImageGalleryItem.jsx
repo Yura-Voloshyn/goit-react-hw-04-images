@@ -1,7 +1,7 @@
 import { Component } from 'react';
 import { StyledLi, StyledItemImage } from './ImageGalleryItem.styled';
 import Modal from '../Modal';
-
+import PropTypes from 'prop-types';
 class GalleyItem extends Component {
   state = {
     showModal: false,
@@ -28,4 +28,10 @@ class GalleyItem extends Component {
     );
   }
 }
+GalleyItem.propTypes = {
+  tags: PropTypes.string,
+  webformatURL: PropTypes.string.isRequired,
+  largeImageURL: PropTypes.string.isRequired,
+};
+
 export default GalleyItem;

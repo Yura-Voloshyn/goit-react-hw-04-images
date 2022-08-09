@@ -1,4 +1,5 @@
 import StyledButton from './Button.styled';
+import PropTypes from 'prop-types';
 const Button = ({ loadMore }) => {
   return (
     <StyledButton
@@ -11,5 +12,7 @@ const Button = ({ loadMore }) => {
     </StyledButton>
   );
 };
-
+Button.propTypes = {
+  loadMore: PropTypes.func.isRequired,
+};
 export default Button;

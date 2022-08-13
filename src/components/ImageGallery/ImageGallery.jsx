@@ -1,73 +1,27 @@
 // import { Component } from 'react';
-import { useState, useEffect } from 'react';
+// import { useState, useEffect } from 'react';
 import GalleryList from './ImageGallery.styled';
 import GalleyItem from '../ImageGalleryItem/ImageGalleryItem';
-import getApiResult from '../../services/apiImageService';
-import Button from '../Button';
-import LoaderWrapper from '../Loader/Loader';
-import { toast } from 'react-toastify';
+// import getApiResult from '../../services/apiImageService';
+
+// import Button from '../Button';
+// import LoaderWrapper from '../Loader/Loader';
+// import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import PropTypes from 'prop-types';
 
-const Gallery = ({ searchQuery }) => {
-  const [images, setImages] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [page, setPage] = useState(1);
-
-  useEffect(() => {
-    if (searchQuery === '') {
-      return;
-    }
-    // const updatePage = searchQuery !== query ? 1 : page;
-    // if (prevProps.searchQuery !== searchQuery || prevState.page !== page) {
-    // }
-    async function getFetch() {
-      try {
-        setLoading(true);
-        const updatedImages = await getApiResult(searchQuery, page);
-        if (updatedImages.length === 0) {
-          toast('No results');
-          setLoading(false);
-          return;
-        }
-
-        // setImages(updatedImages);
-        // setPage(1);
-
-        setImages(prevImages => [...prevImages, ...updatedImages]);
-      } catch (error) {
-        console.log(error);
-      } finally {
-        setLoading(false);
-      }
-    }
-    getFetch();
-    // if (searchQuery !== searchQuery) {
-    //   setImages(updatedImages);
-    //   setPage(1);
-    // }
-  }, [page, searchQuery]);
-  // const onLoadMore = () => {
-  //   setPage(prevPage => prevPage + 1);
-  // };
-
+const Gallery = ({ images }) => {
   return (
-    <>
-      <GalleryList>
-        {images.map(({ id, webformatURL, largeImageURL, tags }) => (
-          <GalleyItem
-            key={id}
-            webformatURL={webformatURL}
-            tags={tags}
-            largeImageURL={largeImageURL}
-          />
-        ))}
-      </GalleryList>
-      {images.length !== 0 && !loading && (
-        <Button loadMore={() => setPage(prevPage => prevPage + 1)} />
-      )}
-      {loading && <LoaderWrapper />}
-    </>
+    <GalleryList>
+      {images.map(({ id, webformatURL, largeImageURL, tags }) => (
+        <GalleyItem
+          key={id}
+          webformatURL={webformatURL}
+          tags={tags}
+          largeImageURL={largeImageURL}
+        />
+      ))}
+    </GalleryList>
   );
 };
 

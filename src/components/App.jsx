@@ -1,22 +1,70 @@
 import React from 'react';
-
+import { toast } from 'react-toastify';
 import Container from './App.styled';
 // import Modal from './Modal';
-import Searchbar from './Searchbar';
+import Searchbar from './Searchbar/Searchbar';
 import Gallery from './ImageGallery';
+import getApiResult from '../services';
+import LoaderWrapper from './Loader/Loader';
 // import LoaderWrapper from './Loader/Loader';
 // import Button from './Button';
+import Button from './Button';
 import { ToastContainer } from 'react-toastify';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 const App = () => {
   const [searchQuery, setSearchQuery] = useState('');
+  const [images, setImages] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [page, setPage] = useState(1);
 
+  useEffect(() => {
+    if (searchQuery === '') {
+      return;
+    }
+    async function getFetch() {
+      try {
+        setLoading(true);
+        const updatedImages = await getApiResult(searchQuery, page);
+        if (updatedImages.length === 0) {
+          toast('No results');
+          setLoading(false);
+          return;
+        }
+        if (prevQuery => prevQuery !== searchQuery) {
+          setImages(updatedImages);
+          setPage(1);
+        }
+        if (prevPage => prevPage !== page && page !== 1) {
+          setImages(prevImages => [...prevImages, ...updatedImages]);
+        }
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    getFetch();
+  }, [page, searchQuery]);
+
+  const onFormSubmit = newQuery => {
+    if (searchQuery === newQuery || searchQuery.trim() === '') {
+      toast('can`t be empty');
+      return;
+    }
+    setSearchQuery(newQuery);
+    setImages([]);
+    setPage(1);
+  };
   return (
     <Container>
-      <Searchbar onSubmit={setSearchQuery} />
+      <Searchbar onFormSubmit={onFormSubmit} />
+      {images.length > 0 && <Gallery images={images} />}
+      {images.length !== 0 && !loading && (
+        <Button loadMore={() => setPage(prevPage => prevPage + 1)} />
+      )}
+      {loading && <LoaderWrapper />}
       <ToastContainer autoClose={3000} />
-      <Gallery searchQuery={searchQuery} />
     </Container>
   );
 };

@@ -1,4 +1,4 @@
-import { Component, useState } from 'react';
+import { useState } from 'react';
 import { StyledLi, StyledItemImage } from './ImageGalleryItem.styled';
 import Modal from '../Modal';
 import PropTypes from 'prop-types';
@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 const GalleyItem = ({ tags, webformatURL, largeImageURL }) => {
   const [showModal, setShowModal] = useState(false);
   const toggleModal = () => {
-    setShowModal(showModal => ({ showModal: !showModal }));
+    setShowModal(prevModal => !prevModal);
   };
   return (
     <StyledLi>

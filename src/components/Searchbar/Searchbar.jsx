@@ -10,6 +10,7 @@ import 'react-toastify/dist/ReactToastify.css';
 
 import { AiOutlineSearch } from 'react-icons/ai';
 import { useState } from 'react';
+
 const Searchbar = ({ onFormSubmit }) => {
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -18,7 +19,6 @@ const Searchbar = ({ onFormSubmit }) => {
   };
   const handleFormSubmit = e => {
     e.preventDefault();
-
     onFormSubmit(searchQuery);
     setSearchQuery('');
   };

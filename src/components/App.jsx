@@ -1,13 +1,10 @@
 import React from 'react';
 import { toast } from 'react-toastify';
 import Container from './App.styled';
-// import Modal from './Modal';
-import Searchbar from './Searchbar/Searchbar';
+import Searchbar from './Searchbar';
 import Gallery from './ImageGallery';
 import getApiResult from '../services';
 import LoaderWrapper from './Loader/Loader';
-// import LoaderWrapper from './Loader/Loader';
-// import Button from './Button';
 import Button from './Button';
 import { ToastContainer } from 'react-toastify';
 import { useState, useEffect } from 'react';
@@ -31,24 +28,19 @@ const App = () => {
           setLoading(false);
           return;
         }
-        if (prevQuery => prevQuery !== searchQuery) {
-          setImages(updatedImages);
-          setPage(1);
-        }
-        if (prevPage => prevPage !== page && page !== 1) {
-          setImages(prevImages => [...prevImages, ...updatedImages]);
-        }
+        setImages(prevImages => [...prevImages, ...updatedImages]);
       } catch (error) {
         console.log(error);
       } finally {
         setLoading(false);
       }
     }
+
     getFetch();
-  }, [page, searchQuery]);
+  }, [searchQuery, page]);
 
   const onFormSubmit = newQuery => {
-    if (searchQuery === newQuery || searchQuery.trim() === '') {
+    if (searchQuery === newQuery || newQuery.trim() === '') {
       toast('can`t be empty');
       return;
     }
